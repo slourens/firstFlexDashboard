@@ -1,0 +1,50 @@
+---
+title: "Untitled"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+library(flexdashboard)
+library(babynames)
+library(plotly)
+library(dplyr)
+```
+
+# Famous Baby Names
+
+## Column {data-width=550}
+
+### All Top Names
+
+```{r, echo = F}
+bigOnes <- babynames %>% group_by(name) %>% summarise(count = n()) %>% top_n(n = 20)
+bigOnesLong <- babynames %>% filter(name %in% bigOnes$name[1:5])
+```
+
+```{r}
+plot_ly(x = ~ year, y = ~ prop, split = ~sex, color = ~name, data = bigOnesLong) %>% add_lines() %>% config(displayModeBar = FALSE) %>% layout(yaxis = list(title = "Percent (babies born)"))
+```
+
+## Column {data-width = 450}
+
+### All Top Names from before 1950 (Males only)
+
+```{r, echo = FALSE}
+## old popular names
+oldPopMaleNames <- babynames %>% filter(year <= 1950 & sex == "M") %>% group_by(name) %>% summarise(count = n()) %>% top_n(n = 5)
+
+babynames %>% filter(name %in% oldPopMaleNames$name[1:5] & sex == "M") %>% plot_ly(x = ~ year, y = ~ prop,
+                                                                                      split = ~name) %>% add_lines() %>% config(displayModeBar = FALSE) %>% layout(yaxis = 
+  list(title = "Percent (babies born)"))
+```
+
+### Chart C
+
+```{r}
+
+```
+
+# Future Predictions
